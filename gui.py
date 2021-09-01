@@ -1,10 +1,78 @@
 
 
 from tkinter import filedialog
-from typing_extensions import IntVar
 import ytdownloader as yt
 import tkinter as tk
-from tkinter import BooleanVar, Button, Checkbutton, Label, ttk
+from tkinter import  Button, Label, ttk
+import pyperclip as ppc
+
+
+class Gui(tk.Frame):
+
+   dir = None
+   label_label = None
+   label_auth = None
+   entry_link = None
+   combobox_resolutions = None
+   button_download = None
+   entry_dir = None
+   button_dir = None
+   button_paste = None
+   resoloutions = ['Audio (mp4)','240p','360p','480p','720p','1080p','1440p','2160p']
+   def __init__(self, window) -> None:
+      tk.Frame.__init__(self, window)
+      self.window = window
+
+   def show(self):
+      self.label_label = Label(self.window, text="YouTube Downloader", fg="blue", font="Ubuntu 24")
+      auth = "By: Abdelhaq El Amraoui   |   For error reports please visit :   www.elam-2020.blogspot.com"
+      self.label_auth = Label(self.window, text=auth, font="Calibri 8")
+      self.entry_link = tk.Entry(self.window, justify='left', width=42)
+      self.combobox_resolutions = ttk.Combobox(self.window, values=self.resoloutions, state='readonly', width=10, background='red')
+      self.combobox_resolutions.current(4) #setting '720p' as default value
+      self.button_download = Button(self.window, text="Download", command=self.func)
+      msg = 'Please select a directory'
+      self.label_dir = Label(self.window, justify='left', width=100, font='Ubuntu 10' ,text=msg)
+      self.button_dir = Button(self.window, text="Directory", command=self.chose_dir)
+      self.button_paste = Button(self.window, text="Paste link", command=self.paste_link)
+    
+      self.label_label.place(x=300, y=40, anchor="center")
+      self.label_auth.place(x=300, y=290, anchor="center")
+      self.entry_link.place(x=420, y=140, anchor="se")
+      self.combobox_resolutions.place(x=420, y=140, anchor="sw")
+      self.label_dir.place(x=300, y=170, anchor="center")
+      self.button_dir.place(x=170, y=220, anchor="center")
+      self.button_paste.place(x=290, y=220, anchor="center")
+      self.button_download.place(x=410, y=220, anchor="center")
+
+   def chose_dir(self):
+      self.dir = filedialog.askdirectory()
+      self.label_dir.configure(text=self.dir)
+
+   def paste_link(self):
+      self.entry_link.delete(0, 'end')
+      self.entry_link.insert(0, ppc.paste())
+   def func(self):
+      link = self.entry_link.get()
+      res = self.combobox_resolutions.get()
+      aud = False
+      if res == self.resoloutions[0]:
+         aud = True
+      dir = self.dir
+
+      print("link : ", link)
+      print("res  : ", res)
+      print("aud  : ", aud)
+      print("dir  : ", dir)
+      d = yt.Download(link=link, res=res, aud=aud, dir=dir)
+      if d.start() == True:
+         print(d.getMassage())
+      else:
+         print(d.getMassage())
+
+
+#--------------------------------------------------------------------------------------------
+
 
 
 
@@ -14,56 +82,6 @@ window.geometry("600x300")
 window.resizable(False, False)
 window.grid(widthInc=10, heightInc=10)
 
-dir = filedialog.askdirectory()
-
-label_label = Label(window, text="YouTube Downloader", fg="blue", font="Ubuntu 24")
-entry_link = tk.Entry(window, justify='center', name="hhhh", width=40)
-combobox_resolutions = ttk.Combobox(window, values=yt.resoloutions, width=9)
-button_download = Button(window, text="Download")
-
-# entry_dir = tk.Entry(window, justify='center', name="hhhh", width=30)
-button_dir = Button(window, text="Directory")
-
-
-label_label.place(x=300, y=40, anchor="center")
-
-entry_link.place(x=420, y=140, anchor="se")
-combobox_resolutions.place(x=420, y=140, anchor="sw")
-
-button_download.place(x=400, y=200, anchor="center")
-button_dir.place(x=200, y=200, anchor="center")
-
-# entry_dir.place(x=420, y=200, anchor="se")
-
-# label_label.pack()
-# entry_link.pack()
-# combobox_resolutions.pack()
-
-def chose_dir():
-  down_dir = filedialog.askdirectory()
-   
-
-button_dir.configure(command=chose_dir)
-
-
-def func():
-   link = entry_link.get()
-   res = combobox_resolutions.get()
-   aud = False
-   if res == yt.resoloutions[0]:
-      aud = True
-   
-   print("link : ", link)
-   print("res  : ", res)
-   print("aud  : ", aud)
-   print("dir  : ", dir)
-
-   if yt.download(link=link, res=res, aud=aud, dir=dir) == True:
-      print("Successfuly donwloaded")
-   else:
-      print("Failed")
-
-button_download.configure(command=func)
-
-#--------------------------------------------------------------------------------------------
+g = Gui(window)
+g.show()
 window.mainloop()
