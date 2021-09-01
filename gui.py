@@ -12,6 +12,7 @@ class Gui(tk.Frame):
    dir = None
    label_label = None
    label_auth = None
+   label_msg = None
    entry_link = None
    combobox_resolutions = None
    button_download = None
@@ -26,7 +27,8 @@ class Gui(tk.Frame):
    def show(self):
       self.label_label = Label(self.window, text="YouTube Downloader", fg="blue", font="Ubuntu 24")
       auth = "By: Abdelhaq El Amraoui   |   For error reports please visit :   www.elam-2020.blogspot.com"
-      self.label_auth = Label(self.window, text=auth, font="Calibri 8")
+      self.label_auth = Label(self.window, text=auth, font="Ubuntu-Mono 8", bg="#c3c4c4", width=600)
+      self.label_msg = Label(self.window, font="Calibri 9", fg='green', text='Hi there ^_^')
       self.entry_link = tk.Entry(self.window, justify='left', width=42)
       self.combobox_resolutions = ttk.Combobox(self.window, values=self.resoloutions, state='readonly', width=10, background='red')
       self.combobox_resolutions.current(4) #setting '720p' as default value
@@ -38,6 +40,8 @@ class Gui(tk.Frame):
     
       self.label_label.place(x=300, y=40, anchor="center")
       self.label_auth.place(x=300, y=290, anchor="center")
+      self.label_msg.place(x=300, y=90, anchor="center")
+
       self.entry_link.place(x=420, y=140, anchor="se")
       self.combobox_resolutions.place(x=420, y=140, anchor="sw")
       self.label_dir.place(x=300, y=170, anchor="center")
@@ -52,6 +56,8 @@ class Gui(tk.Frame):
    def paste_link(self):
       self.entry_link.delete(0, 'end')
       self.entry_link.insert(0, ppc.paste())
+
+
    def func(self):
       link = self.entry_link.get()
       res = self.combobox_resolutions.get()
@@ -60,15 +66,21 @@ class Gui(tk.Frame):
          aud = True
       dir = self.dir
 
-      print("link : ", link)
-      print("res  : ", res)
-      print("aud  : ", aud)
-      print("dir  : ", dir)
+      if link==None or dir==None:
+         return
+
+      self.label_msg.configure(text="")
+
       d = yt.Download(link=link, res=res, aud=aud, dir=dir)
-      if d.start() == True:
-         print(d.getMassage())
-      else:
-         print(d.getMassage())
+
+      try:
+         
+         d.start()
+      except Exception as e:
+         # self.label_msg.
+         self.label_msg.configure(text=str(e), fg='red')
+         # print(e)
+      
 
 
 #--------------------------------------------------------------------------------------------

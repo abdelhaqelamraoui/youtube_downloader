@@ -1,6 +1,7 @@
 
 
 from pytube import YouTube
+from pytube import exceptions as excep
 import traceback as tb
 from os import path
 from os import mkdir
@@ -43,14 +44,22 @@ class Download:
          elif self.aud == False:
             ysf = ys.get_by_resolution(resolution=self.res)
          ysf.download(self.dir)
-         self.message = "Downloaded successfully"
-         return True
-      except AttributeError as e:
-         self.message = f"Resolution [{self.res}] is not available for this video"
-         return False
-      except Exception as e:
-         self.message = "Not working !!"
-         return False
+      except AttributeError:
+         raise Exception(f"Resolution [{self.res}] is not available for this video")
+      except excep.RegexMatchError:
+         raise Exception("Invalid link!")
+      except excep.VideoPrivate:
+         raise Exception("This video is private! Try with a public one")
+      except excep.PytubeError:
+         raise Exception("Error occured!")
+      except excep.VideoPrivate:
+         raise Exception("This video is private! Try with a public one")
+      except excep.VideoUnavailable:
+         raise Exception("This video is unvailable!")
+      except excep.ExtractError:
+         raise Exception("Error in extractiong the video!")
+      except Exception:
+         raise Exception("Error occured. Make sure of your connection ;)")
 
    @property
    def get_message(self):
