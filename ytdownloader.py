@@ -61,12 +61,10 @@ class Download:
       except Exception:
          raise Exception("Error occured. Make sure of your connection ;)")
 
-   @property
-   def get_message(self):
-      return self.message
 
 
 link = 'https://www.youtube.com/watch?v=Wjrrgrvq1ew'
+link = 'https://www.youtube.com/watch?v=UT5F9AXjwhg'
 
 # # download(aud=True)
 # download(res='240p', dir='./')
